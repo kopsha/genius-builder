@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+main()
+{
+    case $1 in
+        shell)
+            bash
+            ;;
+        build)
+            print "preparing a ${CMAKE_BUILD_TYPE}" build, with: $@ \n
+            ;;
+        *)
+            "$@"
+            ;;
+    esac
+}
+
+main "$@"
