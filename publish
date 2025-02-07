@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+source_dir=$(realpath .)
+
+mkdir -p ./dist
+docker build --build-arg BUILD_USER_ID=${UID} -t fleorin/genius-builder /home/fleorin/proj/genius-builder/
+docker push fleorin/genius-builder
+

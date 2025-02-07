@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+docker pull fleorin/genius-builder
+sudo ln -sf $(pwd)/buildx /usr/local/bin/buildx
+
