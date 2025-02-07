@@ -8,26 +8,18 @@ declare -a ANDROID_ABIs=(
     x86
 )
 
-# ## Configure CMAKE
-# ENV ANDROID_CMAKE_TOOLCHAIN="${ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake" \
-#     CMAKE_TOOLCHAIN_FILE="${ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake" \
-#     ANDROID_ABI="arm64-v8a" \
-#     ANDROID_PLATFORM="android-21" \
-#     ANDROID_STL="c++static" \
-#     ANDROID_TOOLCHAIN="clang" \
-#     ANDROID_ARM_MODE="arm" \
-#     CC="$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin/clang" \
-#     CXX="$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++" \
-#     PATH="${ANDROID_NDK_ROOT}:${ANDROID_NDK_ROOT}/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH" 
+declare -a LINUX_ABIs=(
+    x86_64
+)
 
-build_android()
+build_dist()
 {
-    rm -rf *
-    abi=$1
-    shift
+    platform=$1; shift
+    abi=$1; shift
     extra_args=$@
-    platform=android
 
+    # WARN: assumed running inside build folder
+    rm -rf *
     cmake -DCMAKE_TOOLCHAIN_FILE="${ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake" \
         -DANDROID_PLATFORM="android-21" \
         -DANDROID_ABI=$abi \
@@ -41,6 +33,11 @@ build_android()
         -S /source
     cmake --build .
     cmake --install . --prefix "/dist/${platform}-${abi}"
+    cat > "/dist/${platform}-${abi}/.version" <<END
+# build version details
+VERSION=${VERSION}
+CONTEXT=${CONTEXT}
+END
     echo "-- ${platform}-${abi} is ready for distribution"
 }
 
@@ -54,29 +51,39 @@ build_linux()
         -DTARGET_ABI=${abi} \
         $extra_args -S /source
     cmake --build .
-    cmake --install . --prefix "/dist/${platform}-${abi}"
-    echo "-- ${platform}-${abi} is ready for distribution"
+}
+
+run_tests()
+{
+    ctest --output-on-failure --test-dir ./tests
 }
 
 main()
 {
-    case $1 in
+    goal=$1; shift
+    case $goal in
         shell)
             bash
             ;;
 
         debug|release)
-            export CMAKE_BUILD_TYPE=${1^}
-            shift
+            export CMAKE_BUILD_TYPE=${goal^};
             EXTRA_CMAKE_ARGS=$@
 
-            ## linux builds come in only one flavow
-            build_linux $EXTRA_CMAKE_ARGS
-
-            ## android builds are for most common platforms
-            for abi in "${ANDROID_ABIs[@]}"; do
-                build_android $abi $EXTRA_CMAKE_ARGS
+            for abi in "${LINUX_ABIs[@]}"; do
+                build_dist linux $abi $EXTRA_CMAKE_ARGS
             done
+
+            for abi in "${ANDROID_ABIs[@]}"; do
+                build_dist android $abi $EXTRA_CMAKE_ARGS
+            done
+            ;;
+
+        test)
+            export CMAKE_BUILD_TYPE=Debug
+            EXTRA_CMAKE_ARGS=$@
+            build_linux -DBUILD_TESTS=ON $EXTRA_CMAKE_ARGS
+            run_tests
             ;;
 
         *)
