@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+source_dir=$(realpath .)
+
 mkdir -p ./dist
-docker build --build-arg BUILD_USER_ID=${UID} -t genie .
-docker run --rm -it -v ~/work/rc-agent-core:/source -v ./dist:/dist genie $@
+docker build --build-arg BUILD_USER_ID=${UID} -t genie /home/fleorin/proj/genius-builder/
+docker run --rm -it -v ${source_dir}:/source -v ${source_dir}/dist:/dist genie $@
 

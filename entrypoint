@@ -23,16 +23,21 @@ declare -a ANDROID_ABIs=(
 build_android()
 {
     rm -rf *
-    platform=android
     abi=$1
+    shift
+    extra_args=$@
+    platform=android
+
     cmake -DCMAKE_TOOLCHAIN_FILE="${ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake" \
         -DANDROID_PLATFORM="android-21" \
         -DANDROID_ABI=$abi \
         -DCMAKE_ANDROID_ARCH_ABI=$abi \
-        -DCMAKE_CXX_COMPILER_ABI=$abi \
         -DANDROID_STL="c++_static" \
         -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
         -DCMAKE_LIBRARY_OUTPUT_DIRECTORY="/dist/${platform}-${abi}" \
+        -DTARGET_PLATFORM=${platform} \
+        -DTARGET_ABI=${abi} \
+        ${extra_args} \
         -S /source
     cmake --build .
     cmake --install . --prefix "/dist/${platform}-${abi}"
@@ -44,7 +49,10 @@ build_linux()
     rm -rf *
     platform=linux
     abi=x86_64
-    cmake -S /source
+    extra_args=$@
+    cmake -DTARGET_PLATFORM=${platform} \
+        -DTARGET_ABI=${abi} \
+        $extra_args -S /source
     cmake --build .
     cmake --install . --prefix "/dist/${platform}-${abi}"
     echo "-- ${platform}-${abi} is ready for distribution"
@@ -60,13 +68,14 @@ main()
         debug|release)
             export CMAKE_BUILD_TYPE=${1^}
             shift
+            EXTRA_CMAKE_ARGS=$@
 
             ## linux builds come in only one flavow
-            build_linux
+            build_linux $EXTRA_CMAKE_ARGS
 
             ## android builds are for most common platforms
             for abi in "${ANDROID_ABIs[@]}"; do
-                build_android $abi
+                build_android $abi $EXTRA_CMAKE_ARGS
             done
             ;;
 
