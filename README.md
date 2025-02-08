@@ -9,6 +9,7 @@ This repository provides a Docker image to build Android libraries for multiple 
 ### Features
 
 - Builds Android libraries for multiple ABIs (e.g., `arm64-v8a`, `armeabi-v7a`, `x86`, `x86_64`).
+- Builds Linux applications and libraries for multiple ABIs (e.g., `x86`, `x86_64`).
 - Uses the latest Android NDK and CMake.
 - Easily customizable for your project.
 
