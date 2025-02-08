@@ -2,6 +2,7 @@
 set -euo pipefail
 
 USE_TAG=$(git describe --exact-match 2>/dev/null || echo "latest")
-docker build --build-arg BUILD_USER_ID=${UID} -t fleorin/genius-builder:${USE_TAG} /home/fleorin/proj/genius-builder/
+docker build --build-arg BUILD_USER_ID=${UID} -t fleorin/genius-builder:${USE_TAG} -t fleorin/genius-builder /home/fleorin/proj/genius-builder/
+docker push fleorin/genius-builder
 docker push fleorin/genius-builder:${USE_TAG}
 
