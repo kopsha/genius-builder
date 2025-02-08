@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-source_dir=$(realpath .)
 mkdir -p ./dist
-docker run --rm -it -v ${source_dir}:/source -v ${source_dir}/dist:/dist fleorin/genius-builder $@
+SOURCE_DIR=$(pwd)
+DIST_DIR="${SOURCE_DIR}/dist"
+
+docker run --rm -it \
+    -v "${SOURCE_DIR}:/source" \
+    -v "${DIST_DIR}:/dist" \
+    fleorin/genius-builder $@
 

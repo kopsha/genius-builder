@@ -29,16 +29,17 @@ ENV CONTEXT=${CONTEXT}
 ARG VERSION=development
 ENV VERSION=${VERSION}
 
-COPY ./entrypoint /
-ENTRYPOINT [ "/entrypoint" ]
-
 RUN <<EOF
 set -eu
 mkdir -p /source /dist /build
 chown -R ubuntu:ubuntu /build /dist
 git config --global --add safe.directory /source
 EOF
+
 WORKDIR /build
+COPY entrypoint /usr/local/bin/start
+ENTRYPOINT [ "/usr/local/bin/start" ]
+
 
 VOLUME [ "/opt/android/licenses" ]
 VOLUME [ "/source" ]
