@@ -1,17 +1,16 @@
-FROM ubuntu:noble
+FROM debian:bookworm-slim
 
 ## Install base packages
 RUN <<EOF
 set -eu
-apt update
+apt-get update
 apt-get install --yes --no-install-recommends \
-    curl \
-    unzip \
+    ca-certificates \
     build-essential \
-    ninja-build \
     cmake \
-    git \
-    ca-certificates
+    curl \
+    ninja-build \
+    unzip
 rm -rf /var/lib/apt/lists/*
 EOF
 
@@ -28,7 +27,6 @@ else
 fi
 mkdir -p /source /dist
 chown -R genie /source /dist
-git config --global --add safe.directory /source
 EOF
 
 ## Setup Android NDK
