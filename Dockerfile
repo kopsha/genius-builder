@@ -9,6 +9,7 @@ apt-get install --yes --no-install-recommends \
     build-essential \
     cmake \
     curl \
+    git \
     ninja-build \
     unzip
 rm -rf /var/lib/apt/lists/*
