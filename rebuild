@@ -7,6 +7,4 @@ docker build \
     --tag fleorin/genius-builder:${USE_TAG} \
     --tag fleorin/genius-builder:latest \
     .
-# docker push fleorin/genius-builder
-# docker push fleorin/genius-builder:${USE_TAG}
 

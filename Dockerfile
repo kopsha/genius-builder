@@ -1,4 +1,4 @@
-FROM debian:bookworm-slim
+FROM debian:trixie-slim
 
 ## Install base packages
 RUN <<EOF
@@ -11,8 +11,17 @@ apt-get install --yes --no-install-recommends \
     curl \
     git \
     ninja-build \
-    unzip
+    unzip \
+    gcc-14 \
+    g++-14 \
+    libstdc++-14-dev
 rm -rf /var/lib/apt/lists/*
+
+## Ensure GCC 14 is default
+update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-14 100
+update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-14 100
+update-alternatives --set gcc /usr/bin/gcc-14
+update-alternatives --set g++ /usr/bin/g++-14
 EOF
 
 ## Setup non-root builder user
