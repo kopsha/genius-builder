@@ -40,7 +40,7 @@ chown -R genie /source /dist
 EOF
 
 ## Setup Android NDK
-ENV ANDROID_NDK_VERSION="r27c"
+ENV ANDROID_NDK_VERSION="r28"
 ENV ANDROID_SDK_ROOT="/opt/android"
 ENV ANDROID_NDK_ROOT="/opt/android/android-ndk-${ANDROID_NDK_VERSION}"
 RUN <<EOF

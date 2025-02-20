@@ -32,7 +32,6 @@ build_dist()
     "
     case "${platform}" in
         android)
-            printf "doing android\n"
             platform_settings="
                 -DCMAKE_TOOLCHAIN_FILE=${ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake
                 -DANDROID_PLATFORM=android-21
@@ -87,6 +86,15 @@ main()
     case $goal in
         shell)
             bash
+            ;;
+
+        aaa)
+            export CMAKE_BUILD_TYPE=Debug;
+            EXTRA_CMAKE_ARGS=$@
+
+            for abi in "${ANDROID_ABIs[@]}"; do
+                build_dist android $abi $EXTRA_CMAKE_ARGS
+            done
             ;;
 
         debug|release)
