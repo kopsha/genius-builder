@@ -6,7 +6,7 @@ SOURCE_DIR=$(pwd)
 DIST_DIR="${SOURCE_DIR}/dist"
 
 docker run --rm -it \
-    -v "${SOURCE_DIR}:/source" \
+    -v "${SOURCE_DIR}:/source:ro" \
     -v "${DIST_DIR}:/dist" \
     fleorin/genius-builder $@
 
